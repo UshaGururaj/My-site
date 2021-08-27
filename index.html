@@ -31,27 +31,6 @@ TRACE ON
         #--------------------------------------------------------
         sv_a = urhk_B2K_printRepos("BANCS")
         print(sv_a)
-        #--------------------------------------------------
-        sv_u = urhk_B2k_PID("")
-        CUST.DATA.pid = BANCS.OUTPARAM.PID
-        CUST.DATA.BODDate = mid$(BANCS.STDIN.BODDate,0,10)
-
-        CUST.DATA.succListFile = "SuccessReport_" + CUST.DATA.pid + ".RPT"
-        CUST.DATA.failListFile = "FailureReport_" + CUST.DATA.pid + ".RPT"
-        sv_k="      A/c Success Report Based on Unclaimed TDA Accounts "
-        sv_r=system("echo "+'"'+sv_k+'"'+"   >> "+CUST.DATA.succListFile)
-        print(sv_r)
-
-        sv_k="      A/c  Failure Report Based On Unclaimed TDA Accounts "
-        sv_r=system("echo "+'"'+sv_k+'"'+"   >> "+CUST.DATA.failListFile)
-        print(sv_r)
-
-        sv_k="--------------------------------------------------------------------------------------------------"
-        sv_r=system("echo "+'"'+sv_k+'"'+"   >> "+CUST.DATA.succListFile)
-        print(sv_r)
-        sv_k="--------------------------------------------------------------------------------------------------"
-        sv_r=system("echo "+'"'+sv_k+'"'+"   >> "+CUST.DATA.failListFile)
-        print(sv_r)
 
         CUST.DATA.totAmt = "0"
         CUST.DATA.drAcctNum = ""
@@ -99,7 +78,6 @@ TRACE ON
         MTT.TranDetails.PostTranFlag                    = "N"
         sv_r = urhk_MTTS_DefineTransaction("CREDI")
         print(sv_r)
-
 
         CUST.DATA.debitAmount="0"
         sv_k = "drAcctNum,debitTranAmt|select distinct accnt_no,user_calc_chrge_amt from custom.modamt where entity_cre_flg ='Y' and  rownum <5 "
@@ -336,25 +314,6 @@ TRACE ON
                         print(sv_r)
                 #}
                 ENDIF
-
-ENDOFSCRIPT:
-                #------------------------------------------------------------------
-                sv_k="                      ***********End Of Record********                           "
-                sv_r=system("echo "+'"'+sv_k+'"'+"   >> "+CUST.DATA.failListFile)
-                print(sv_r)
-                print(CUST.DATA.failListFile)
-                sv_m="                      ***********End Of Record********                           "
-                sv_r=system("echo "+'"'+sv_m+'"'+"   >> "+CUST.DATA.succListFile)
-                print(sv_r)
-                #-------------------------------------------------------------
-                # Sending the success and failure report files to PRINT Queue.
-                #-------------------------------------------------------------
-                sv_d = "TD Account Closure Failure Report"
-                sv_b = "exebatch babx4040 $B2K_SESSION_ID "+CUST.DATA.failListFile+" '"+sv_d+"' MANAGER 1 N"
-                sv_e = SYSTEM(sv_b)
-                sv_d = "TD Account Closure Success Report"
-                sv_b = "exebatch babx4040 $B2K_SESSION_ID "+CUST.DATA.succListFile+" '"+sv_d+"' MANAGER 1 N"
-                sv_e = SYSTEM(sv_b)
 
 EXITSCRIPT
 TRACE OFF
